@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>クイズアプリ</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="homeScreen" class="container">
+        <h1>クイズ一覧</h1>
+        
+        <button id="createNewBtn" class="create-btn">＋ 新しいクイズを作成</button>
+
+        <div id="quizList" class="quiz-list"></div>
+    </div>
+
+    <div id="editScreen" class="container" style="display: none;">
+        <h2>クイズの編集</h2>
+        <div class="edit-box">
+            <label for="editTitle">タイトル</label>
+            <input type="text" id="editTitle" autocomplete="off" style="width: 100%; box-sizing: border-box;">
+            
+            <label for="editTextarea" style="margin-top: 15px;">問題と答え（スペースで区切る）</label>
+            <textarea id="editTextarea" rows="12"></textarea>
+            
+            <button id="saveEditBtn" style="width: 100%; margin-bottom: 10px;">保存して一覧に戻る</button>
+            <button id="cancelEditBtn" class="secondary-btn" style="width: 100%;">キャンセル</button>
+        </div>
+    </div>
+
+    <div id="quizScreen" class="container" style="display: none;">
+        <h2 id="quizTitle">クイズタイトル</h2>
+        
+        <div id="modeSelectArea" class="quiz-box">
+            <h3 style="margin-bottom: 20px;">出題モード</h3>
+            <button id="startSequentialBtn" style="width: 100%; margin-bottom: 10px;">順番通りにスタート</button>
+            <button id="startRandomBtn" style="width: 100%; margin-bottom: 20px; background-color: #2196F3;">ランダムでスタート</button>
+            
+            <hr style="border: none; border-top: 2px dashed #ccc; margin: 0 0 20px 0;">
+            
+            <button id="editQuizBtn" style="width: 100%; margin-bottom: 10px; background-color: #FF9800;">編集</button>
+            
+            <button id="cancelQuizBtn" class="secondary-btn" style="width: 100%;">一覧に戻る</button>
+        </div>
+
+        <div class="quiz-box" id="quizBoxArea" style="display: none;">
+            <div id="progressDisplay" class="progress-display"></div>
+            
+            <h3 id="question">問題</h3>
+            
+            <div id="correctAnswerDisplay" class="answer-display"></div>
+            
+            <input type="text" id="answerInput" autocomplete="off">
+            <br>
+            <button id="submitBtn">答える</button>
+
+            <div id="mistakeContainer" style="display: none; margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px;">
+                <h4 style="color: #333; margin-top: 0; margin-bottom: 15px;">間違えた問題</h4>
+                <div id="mistakeList" class="mistake-list"></div>
+            </div>
+        </div>
+        
+        <div class="controls" id="quizControls" style="display: none;">
+            <button id="restartBtn" style="display: none;">最初からもう一度</button>
+            <button id="backBtn" class="secondary-btn">一覧に戻る</button>
+        </div>
+    </div>
+
+    <div id="overlayMark"></div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
