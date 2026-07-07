@@ -26,6 +26,7 @@ function loadQuizzesFromStorage() {
     }
 }
 
+// 【変更点1】別解を配列として取得するように修正
 function parseRawText(text) {
     const newWords = [];
     const lines = text.split('\n');
@@ -34,9 +35,13 @@ function parseRawText(text) {
         line = line.trim();
         if (line === '') continue;
 
+        // スペースやタブで区切る
         const parts = line.split(/[ 　\t]+/);
         if (parts.length >= 2) {
-            newWords.push({ q: parts[0], a: parts[1] });
+            const q = parts[0];
+            // 2番目以降の要素をすべて「正解の配列」として扱う
+            const a = parts.slice(1); 
+            newWords.push({ q: q, a: a });
         }
     }
     return newWords;
@@ -51,6 +56,7 @@ document.getElementById('createNewBtn').addEventListener('click', function() {
     document.getElementById('editTextarea').value = '';
 });
 
+// 【変更点2】生テキストがない場合のフォールバックを配列対応に修正
 document.getElementById('editQuizBtn').addEventListener('click', function() {
     document.getElementById('quizScreen').style.display = 'none';
     document.getElementById('editScreen').style.display = 'block';
@@ -60,7 +66,8 @@ document.getElementById('editQuizBtn').addEventListener('click', function() {
     if (editingQuiz.rawText) {
         document.getElementById('editTextarea').value = editingQuiz.rawText;
     } else {
-        const text = editingQuiz.words.map(w => `${w.q}　${w.a}`).join('\n');
+        // 答えが配列になっているのでスペースで結合してテキストエリアに戻す
+        const text = editingQuiz.words.map(w => `${w.q}　${w.a.join(' ')}`).join('\n');
         document.getElementById('editTextarea').value = text;
     }
 });
@@ -202,7 +209,6 @@ function renderQuizList() {
     });
 }
 
-// ▼ 変更：標準の confirm に戻しました ▼
 function deleteQuiz(id, title) {
     if (confirm(`クイズ「${title}」を削除してもよろしいですか？`)) {
         savedQuizzes = savedQuizzes.filter(quiz => quiz.id !== id);
@@ -280,6 +286,7 @@ function showQuestion() {
     input.focus();
 }
 
+// 【変更点3】答え合わせ処理を「配列にユーザーの回答が含まれているか」に変更し、表示をカンマ区切りに
 function checkAnswer() {
     if (isWaitingForNext) {
         currentIndex++;
@@ -293,10 +300,16 @@ function checkAnswer() {
 
     const input = document.getElementById('answerInput');
     const userAnswer = input.value.trim();
-    const correctAnswer = currentQuizData[currentIndex].a;
+    
+    // 正解は配列になっている
+    const correctAnswers = currentQuizData[currentIndex].a; 
+    // 表示用に「カンマと半角スペース」で結合する
+    const displayAnswer = correctAnswers.join(', '); 
+    
     const overlay = document.getElementById('overlayMark');
     
-    const isCorrect = (userAnswer === correctAnswer);
+    // ユーザーの入力が正解の配列のどれかと一致すれば正解（isCorrectがtrueになる）
+    const isCorrect = correctAnswers.includes(userAnswer);
 
     if (isCorrect) {
         overlay.textContent = '◯';
@@ -313,9 +326,10 @@ function checkAnswer() {
         
         document.getElementById('correctAnswerDisplay').style.color = '#f44336';
 
+        // 間違えた問題リストにも「カンマ区切り」の答えを渡す
         mistakes.push({
             q: currentQuizData[currentIndex].q,
-            a: correctAnswer
+            a: displayAnswer
         });
         renderMistakes(); 
     }
@@ -327,7 +341,8 @@ function checkAnswer() {
         overlay.classList.remove('show-mark');
     }, 1000);
 
-    document.getElementById('correctAnswerDisplay').textContent = correctAnswer;
+    // 画面に「赤, 赤色」のように正解を表示
+    document.getElementById('correctAnswerDisplay').textContent = displayAnswer;
 
     isWaitingForNext = true;
     document.getElementById('submitBtn').textContent = '次へ';
@@ -357,7 +372,7 @@ function renderMistakes() {
         
         const aSpan = document.createElement('span');
         aSpan.className = 'mistake-a';
-        aSpan.textContent = mistake.a;
+        aSpan.textContent = mistake.a; // ここにはカンマ区切りの文字列が入る
         
         itemDiv.appendChild(qSpan);
         itemDiv.appendChild(aSpan);
