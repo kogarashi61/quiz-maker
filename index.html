@@ -12,9 +12,21 @@
     <div id="homeScreen" class="container">
         <h1>クイズ一覧</h1>
         
-        <button id="createNewBtn" class="create-btn">＋ 新しいクイズを作成</button>
+        <button id="createNewBtn" class="create-btn">＋ クイズを作成</button>
 
         <div id="quizList" class="quiz-list"></div>
+
+        <div class="backup-controls" style="margin-top: 40px; padding-top: 20px; border-top: 2px dashed #ccc; text-align: center;">
+            <p style="font-size: 14px; color: #666; margin-bottom: 15px; font-weight: bold;">
+                クイズを保存<br>
+                <span style="font-size: 12px; font-weight: normal;">履歴削除や端末変更の前に保存してください</span>
+            </p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button id="exportBtn" class="secondary-btn" style="flex: 1; background-color: #607D8B; padding: 10px;">保存する</button>
+                <button id="importBtn" class="secondary-btn" style="flex: 1; background-color: #607D8B; padding: 10px;">復元する</button>
+            </div>
+            <input type="file" id="importFile" accept=".json" style="display: none;">
+        </div>
     </div>
 
     <div id="editScreen" class="container" style="display: none;">
@@ -36,7 +48,7 @@
         
         <div id="modeSelectArea" class="quiz-box">
             <h3 style="margin-bottom: 20px;">出題モード</h3>
-            <button id="startSequentialBtn" style="width: 100%; margin-bottom: 10px;">順番通りにスタート</button>
+            <button id="startSequentialBtn" style="width: 100%; margin-bottom: 10px; background-color: #2196F3;">順番通りにスタート</button>
             <button id="startRandomBtn" style="width: 100%; margin-bottom: 20px; background-color: #2196F3;">ランダムでスタート</button>
             
             <hr style="border: none; border-top: 2px dashed #ccc; margin: 0 0 20px 0;">
