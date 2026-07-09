@@ -1,12 +1,16 @@
-/* 全体の基本設定 */
-body {
+html, body {
     font-family: sans-serif;
-    background: linear-gradient(135deg, #f0f8ff, #e6e6fa);
+    background-color: #f7f7f7; 
+    margin: 0;
+    padding: 0 0 50px;
+    min-height: 100vh;
+    color: #333; 
+}
+
+body {
     display: flex;
     justify-content: center;
     padding: 40px 20px;
-    min-height: 100vh;
-    margin: 0;
     box-sizing: border-box;
 }
 
@@ -15,31 +19,102 @@ body {
     max-width: 500px;
 }
 
-h1, h2 {
-    color: #333;
+h1, h2, h3, h4 {
+    color: #333; 
     text-align: center;
 }
 
-/* 作成ボタンのデザイン */
-.create-btn {
-    width: 100%;
-    padding: 15px;
-    font-size: 18px;
-    background-color: #2196F3;
+/* ＋クイズを追加ボタン（左下固定） */
+.fab-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #85c1a5; 
     color: white;
-    font-weight: bold;
+    font-size: 30px;
     border: none;
-    border-radius: 8px;
+    border-radius: 15px; 
     cursor: pointer;
-    margin-bottom: 30px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* スワイプ用リストのレイアウト */
+/* メニューボタン（左上） */
+.menu-btn {
+    position: absolute;
+    top: 5px;
+    left: 0;
+    width: 44px;
+    height: 44px;
+    background-color: transparent;
+    border: 2px solid #7f7f7f;
+    border-radius: 2px;
+    color: #7f7f7f;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+/* メニューモーダルのデザイン */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background-color: #f7f7f7;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    width: 90%;
+    max-width: 250px; 
+    box-shadow: none; 
+}
+
+.menu-action-btn {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #c5a58c; 
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.menu-close-btn {
+    width: auto; 
+    display: inline-block;
+    padding: 8px 20px;
+    margin-top: 20px;
+    background-color: #b0b0b0; 
+    color: white;
+    border: none;
+    border-radius: 2px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* クイズ一覧のレイアウト */
 .quiz-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    margin-top: 30px;
 }
 
 .quiz-item-container {
@@ -50,10 +125,10 @@ h1, h2 {
 
 .quiz-item-btn {
     flex-grow: 1;
-    background-color: white;
-    color: #333;
-    border: 2px solid #ccc; /* 緑からグレーに変更 */
-    border-radius: 0; /* 追加：丸みをなくす */
+    background-color: #ffffff;
+    color: #333; 
+    border: 2px solid #9a9a9a; 
+    border-radius: 0; 
     padding: 15px;
     font-size: 18px;
     cursor: pointer;
@@ -77,7 +152,7 @@ h1, h2 {
     bottom: 0;
     width: 80px;
     border: none;
-    border-radius: 0; /* 追加：丸みをなくす */
+    border-radius: 0; 
     background-color: #d32f2f;
     color: white;
     font-size: 16px;
@@ -86,26 +161,42 @@ h1, h2 {
     z-index: 1;
 }
 
-/* クイズ出題エリア・編集エリア共通 */
+/* クイズ設定・編集エリア共通 */
 .quiz-box, .edit-box {
-    background-color: white;
+    background-color: #f7f7f7; 
     padding: 30px;
+    margin-bottom: 25px;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     text-align: center;
-    margin-bottom: 20px;
+}
+
+/* 出題の順序エリアの個別設定 */
+#modeSelectArea {
+    background-color: #ffffff; 
+    border: 2px solid #9a9a9a;
+    box-sizing: border-box;
+}
+
+/* クイズプレイ中エリアの個別設定 */
+#quizBoxArea {
+    background-color: #ffffff; 
+    border: 2px solid #9a9a9a;
+    box-sizing: border-box;
+    border-radius: 0; 
 }
 
 /* 編集画面のデザイン */
 .edit-box {
     text-align: left;
+    padding: 10px;
+    box-sizing: border-box;
 }
 
 .edit-box label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
-    color: #555;
+    color: #333; 
 }
 
 textarea {
@@ -119,29 +210,32 @@ textarea {
     resize: vertical;
     font-family: inherit;
     line-height: 1.5;
+    color: #333;
 }
 
 /* 問題数表示のデザイン */
 .progress-display {
     font-size: 18px;
     color: #888;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
     font-weight: bold;
 }
 
 #question {
-    font-size: 40px;
-    margin-bottom: 20px;
-    color: #333;
+    /* fontSizeはJS制御にしました */
+    margin: 5px 0 5px 0;
+    color: #333; 
     min-height: 48px; 
 }
 
+/* 解答表示エリア（ズレ防止のため line-height と min-height を固定） */
 .answer-display {
     font-size: 20px;
     font-weight: bold;
     color: #e91e63;
-    min-height: 24px;
-    margin: 5px 0; 
+    min-height: 22px;
+    line-height: 22px;
+    margin: -4px auto 4px; 
 }
 
 input[type="text"] {
@@ -150,13 +244,14 @@ input[type="text"] {
     width: 80%;
     border: 2px solid #ccc;
     border-radius: 6px;
-    margin-bottom: 20px;
+    color: #333;
+    display: block;
+    margin: 0 auto 20px;
 }
 
 button {
     font-size: 16px;
     padding: 10px 20px;
-    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 6px;
@@ -165,12 +260,13 @@ button {
 
 .controls {
     display: flex;
+    flex-direction: column;
     justify-content: center;
-    gap: 10px;
 }
 
+/* 一覧に戻る・キャンセルなどのボタングレー */
 .secondary-btn {
-    background-color: #888;
+    background-color: #b0b0b0; 
 }
 
 /* ◯×のオーバーレイ表示 */
@@ -196,22 +292,27 @@ button {
 .mistake-list {
     display: flex;
     flex-direction: column;
-    gap: 8px; 
+    gap: 0;
 }
 
 .mistake-item {
     display: flex;
     justify-content: space-between; 
-    background-color: #fff5f5; 
-    padding: 10px 15px;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: bold;
+    background-color: transparent; 
+    border: none; 
+    padding: 10px;
+    font-size: 14px;
+    border-bottom: 1px solid #ccc;
+}
+
+.mistake-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0px;
 }
 
 .mistake-q {
     text-align: left;
-    color: #333;
+    color: #333; 
 }
 
 .mistake-a {
