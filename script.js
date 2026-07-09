@@ -458,6 +458,7 @@ function beginQuiz() {
     document.getElementById('answerInput').style.display = 'block'; 
     document.getElementById('restartBtn').style.display = 'none';
     document.getElementById('endQuizBtn').style.display = 'block';
+    document.getElementById('backBtn').style.display = 'none';
     
     showQuestion();
 }
@@ -564,6 +565,7 @@ function renderMistakes() {
     });
 }
 
+// 結果画面
 function finishQuiz() {
     renderMistakes(); 
 
@@ -596,6 +598,7 @@ function finishQuiz() {
     document.getElementById('correctAnswerDisplay').textContent = '';
     document.getElementById('endQuizBtn').style.display = 'none';
     document.getElementById('restartBtn').style.display = 'block';
+    document.getElementById('backBtn').style.display = 'block';
     
     const mistakeContainer = document.getElementById('mistakeContainer');
     mistakeContainer.style.marginTop = '0px'; 
@@ -613,7 +616,7 @@ document.getElementById('submitBtn').addEventListener('mousedown', function(even
 document.getElementById('submitBtn').addEventListener('click', checkAnswer);
 
 document.getElementById('answerInput').addEventListener('keydown', function(event) {
-    // 判定後のとき、Enter以外のキー入力をキャンセルする
+    // 判定後、Enter以外のキー入力をキャンセルする
     if (isWaitingForNext && event.key !== 'Enter') {
         event.preventDefault();
         return;
@@ -625,7 +628,6 @@ document.getElementById('answerInput').addEventListener('keydown', function(even
     }
 });
 
-// スマホの予測変換やフリックで無理やり入力されるのを防ぐ
 document.getElementById('answerInput').addEventListener('input', function(event) {
     if (isWaitingForNext) {
         this.value = ''; // 文字が入っても即座に消去する
@@ -647,6 +649,7 @@ document.getElementById('restartBtn').addEventListener('click', function() {
     document.getElementById('answerInput').style.display = 'block';
     document.getElementById('restartBtn').style.display = 'none';
     document.getElementById('endQuizBtn').style.display = 'block';
+    document.getElementById('backBtn').style.display = 'none';
     
     const quizBox = document.getElementById('quizBoxArea');
     quizBox.style.padding = '30px';
