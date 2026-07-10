@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -12,9 +11,7 @@
 
     <div id="menuModal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
-            <p style="font-size: 12px; color: #888; margin-bottom: 12px;">
-                履歴を削除するとデータが消えるため、<br>こまめに保存してください。
-            </p>
+            <p style="font-size: 12px; color: #888; margin-bottom: 20px;">履歴を削除するとデータが消えるため、<br>こまめに保存してください。</p>
             <button id="exportBtn" class="menu-action-btn">クイズを保存する</button>
             <button id="importBtn" class="menu-action-btn">クイズを復元する</button>
             <button id="closeMenuBtn" class="menu-close-btn">閉じる</button>
@@ -22,13 +19,23 @@
         </div>
     </div>
 
+    <div id="fullScreenEditor" style="display: none;">
+        <div class="editor-header">
+            <button id="cancelEditorBtn" class="icon-btn">&lt;</button>
+            <span style="flex:1; text-align: center; font-weight: bold;">問題と解答</span>
+            <button id="applyEditorBtn" class="primary-btn" style="padding: 8px 15px;">保存</button>
+        </div>
+        <div class="editor-container">
+            <div id="editorBg" class="editor-bg"></div>
+            <textarea id="editorTextarea" class="editor-textarea" placeholder="例：&#13;&#10;win 勝つ&#13;&#10;lose 負ける 失う"></textarea>
+        </div>
+    </div>
+
     <div id="homeScreen" class="container" style="position: relative;">
         <button id="menuBtn" class="menu-btn">☰</button>
-        <button id="toggleReorderBtn" style="position: absolute; top: 45px; right: 0; font-size: 16px; color: #b0b0b0; cursor: pointer; z-index: 100; padding: 3px 15px; background-color: #f7f7f7">↑↓</button>
+        <button id="toggleReorderBtn" class="reorder-toggle-btn">↑↓</button>
         <h1 style="margin-top: 0px;">クイズ一覧</h1>
-        
         <div id="quizList" class="quiz-list"></div>
-
         <button id="createNewBtn" class="fab-btn">＋</button>
     </div>
 
@@ -36,10 +43,10 @@
         <h2>クイズの編集</h2>
         <div class="edit-box">
             <label for="editTitle">タイトル</label>
-            <input type="text" id="editTitle" autocomplete="off" style="width: 100%; box-sizing: border-box;" placeholder="例：英単語">
+            <input type="text" id="editTitle" autocomplete="off" style="width: 100%; margin-bottom: 20px;">
             
-            <label for="editTextarea" style="margin-top: 15px;">問題と解答</label>
-            <textarea id="editTextarea" rows="12" placeholder="例：&#13;&#10;win 勝つ&#13;&#10;lose 負ける 失う"></textarea>
+            <label>問題と解答</label>
+            <button id="openEditorBtn" style="width: 100%; margin-bottom: 25px; background-color: white; border-radius: 2px; color:#333; border: 1px solid #333;">編集する</button>
             
             <div style="margin-bottom: 25px;">
                 <label for="editFontSize" style="display: flex; justify-content: space-between;">
@@ -49,7 +56,7 @@
                 <input type="range" id="editFontSize" min="10" max="50" value="30" style="width: 100%; margin-top: 8px;">
             </div>
 
-            <button id="saveEditBtn" style="display: block; width: 70%; margin: 0 auto 20px; background-color: #85c1a5;">保存する</button>
+            <button id="saveEditBtn" class="primary-btn" style="display: block; width: 70%; margin: 0 auto 20px;">保存する</button>
             <button id="cancelEditBtn" class="secondary-btn" style="display: block; width: 70%; margin: 0 auto">キャンセル</button>
         </div>
     </div>
@@ -58,20 +65,35 @@
         <h2 id="quizTitle">クイズタイトル</h2>
         
         <div id="modeSelectArea" class="quiz-box">
-            <h3 style="margin: -2px 0 10px;">出題の順序</h3>
-            <button id="startSequentialBtn" style="width: 100%; margin-bottom: 10px; background-color: #85c1a5;">リスト順</button>
-            <button id="startRandomBtn" style="width: 100%; margin-bottom: 20px; background-color: #85c1a5;">ランダム</button>
+            <h3 style="margin: -2px 0 15px;">設定</h3>
+            
+            <div class="toggle-group">
+                <button id="targetAllBtn" class="toggle-btn active" style="border-radius: 6px 0 0 6px;">全ての問題</button>
+                <button id="targetMistakeBtn" class="toggle-btn" style="border-radius: 0 6px 6px 0;">間違えた問題</button>
+            </div>
+            
+            <div class="toggle-group">
+                <button id="orderSeqBtn" class="toggle-btn active" style="border-radius: 6px 0 0 6px;">リスト順</button>
+                <button id="orderRandBtn" class="toggle-btn" style="border-radius: 0 6px 6px 0;">ランダム</button>
+            </div>
+
+            <button id="startQuizBtn" class="primary-btn" style="width: 100%; margin-bottom: 20px;">スタート</button>
+            
+            <div id="resumeArea" style="display: none;">
+                <hr style="border: none; border-top: 2px dashed #ccc; margin: 0 0 20px 0;">
+                <button id="resumeQuizBtn" class="primary-btn" style="width: 100%; margin-bottom: 20px;">続きから</button>
+            </div>
             
             <hr style="border: none; border-top: 2px dashed #ccc; margin: 0 0 20px 0;">
             
-            <button id="editQuizBtn" style="width: 100%; margin-bottom: 10px; background-color: #c5a58c;">クイズを編集</button>
-            
+            <button id="editQuizBtn" class="accent-btn" style="width: 100%; margin-bottom: 10px;">クイズを編集</button>
+            <button id="openQuestionListBtn" class="accent-btn" style="width: 100%; margin-bottom: 10px;">問題一覧</button>
+            <button id="resetMistakesBtn" class="secondary-btn" style="width: 100%; margin-bottom: 10px; background-color: #e0e0e0; color: #d32f2f;">間違えた問題をリセット</button>
             <button id="cancelQuizBtn" class="secondary-btn" style="width: 100%;">一覧に戻る</button>
         </div>
 
         <div class="quiz-box" id="quizBoxArea" style="display: none;">
             <div id="progressDisplay" class="progress-display"></div>
-            
             <h3 id="question">問題</h3>
 
             <div id="resultStats" style="display: none; font-size: 18px; font-weight: bold; margin-bottom: 20px;">
@@ -81,8 +103,8 @@
             
             <div id="correctAnswerDisplay" class="answer-display"></div>
             
-            <input type="text" id="answerInput" autocomplete="off">
-            <button id="submitBtn" style="background-color: #85c1a5;">答える</button>
+            <input type="text" id="answerInput" autocomplete="off" style="width:80%; margin:0 auto 20px; display:block;">
+            <button id="submitBtn" class="primary-btn">答える</button>
 
             <div id="mistakeContainer" style="display: none; margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px;">
                 <h4 style="margin: 10px auto 5px;">間違えた問題</h4>
@@ -90,10 +112,34 @@
             </div>
         </div>
         
-        <div class="controls" id="quizControls" style="display: none;">
-            <button id="endQuizBtn" style="background-color: #b0b0b0; width: 70%; display: block; margin: 0 auto 20px;">クイズを終了する</button>
-            <button id="restartBtn" style="display: none; background-color: #85c1a5; width: 70%; display:block; margin: 0 auto 20px;">もう一度最初から</button>
-            <button id="backBtn" class="secondary-btn" style="width: 70%; display: block; margin:0 auto;">一覧に戻る</button>
+        <div id="quizControls" style="display: none; flex-direction: column; align-items: center; gap: 15px; margin-top:20px;">
+            <button id="endQuizBtn" class="secondary-btn" style="width: 70%;">クイズを終了する</button>
+            <button id="restartBtn" class="primary-btn" style="display: none; width: 70%;">もう一度最初から</button>
+            <button id="backBtn" class="secondary-btn" style="width: 70%;">一覧に戻る</button>
+        </div>
+    </div>
+
+    <div id="questionListScreen" class="container" style="display: none; position: relative;">
+        <div style="position: absolute; top: 5px; right: 0; z-index: 100; display: flex;">
+            <button id="qlFilterMistakeBtn" class="reorder-toggle-btn" style="right: 48px; padding: 3px 18px; font-weight: bold;">×</button>
+            <button id="qlToggleReorderBtn" class="reorder-toggle-btn">↑↓</button>
+        </div>
+        
+        <h2>問題一覧</h2>
+        <div id="qlList" style="margin-top: 28px;"></div>
+        <button id="qlBackBtn" class="secondary-btn" style="width: 70%;  display: block; margin: 30px auto 0;">設定に戻る</button>
+    </div>
+
+    <div id="singleWordEditScreen" class="container" style="display: none;">
+        <h2>クイズの編集</h2>
+        <div class="edit-box">
+            <label>問題</label>
+            <input type="text" id="singleQInput" style="width: 100%; margin-bottom: 20px;">
+            <label>解答</label>
+            <input type="text" id="singleAInput" style="width: 100%; margin-bottom: 30px;">
+            
+            <button id="saveSingleEditBtn" class="primary-btn" style="width: 100%; margin-bottom: 10px;">保存する</button>
+            <button id="cancelSingleEditBtn" class="secondary-btn" style="width: 100%;">キャンセル</button>
         </div>
     </div>
 
