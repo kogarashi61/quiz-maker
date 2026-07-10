@@ -3,11 +3,11 @@
 ========================================================================= */
 html, body {
     font-family: sans-serif;
-    background-color: #f7f7f7; 
+    background-color: #f7f7f7;
     margin: 0;
-    padding: 0 0 50px;
+    padding: 0 0 80px;
     min-height: 100vh;
-    color: #333; 
+    color: #333;
 }
 
 body {
@@ -24,9 +24,10 @@ button {
     font-size: 16px; padding: 10px 20px;
     color: white; border: none; border-radius: 6px; cursor: pointer;
 }
-.primary-btn { background-color: #85c1a5; }   
-.secondary-btn { background-color: #b0b0b0; } 
+.primary-btn { background-color: #85c1a5; }  
+.secondary-btn { background-color: #b0b0b0; }
 .accent-btn { background-color: #c5a58c; }    
+.danger-btn { background-color: #d32f2f; }
 
 .icon-btn {
     background: transparent; border: none; color: #333; font-size: 24px;
@@ -38,10 +39,67 @@ input[type="text"], textarea {
     border-radius: 6px; box-sizing: border-box; color: #333;
 }
 
-.reorder-toggle-btn {
-    position: absolute; top: 45px; right: 0; font-size: 16px;
-    color: #b0b0b0; cursor: pointer; z-index: 100;
-    padding: 3px 15px; background-color: transparent; border: none;
+/* 共通のヘッダー枠付き通常ボタン（編集・×ボタン用） */
+.header-btn {
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+    padding: 4px 14px;
+    background-color: #ffffff; 
+    border: 1px solid #b0b0b0;
+    border-radius: 4px;
+    box-sizing: border-box;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+.header-btn.active {
+    background-color: #e91e63;
+    color: #ffffff;
+    border-color: #e91e63;
+}
+
+/* 固定配置される問題一覧の戻るボタン */
+.fixed-back-btn {
+    position: fixed; top: 15px; left: 15px; z-index: 2000;
+    background-color: #ffffff; color: #333; border: 1px solid #b0b0b0;
+    border-radius: 4px; padding: 4px 14px; font-weight: bold; font-size: 16px;
+    cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* 下部固定一括操作バー */
+.action-bar {
+    position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 540px; background-color: #ffffff;
+    border-top: 1px solid #ccc; box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+    padding: 12px 20px; box-sizing: border-box;
+    display: flex; justify-content: center; gap: 10px; z-index: 1500;
+}
+.action-bar button {
+    flex: 1; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 6px;
+}
+.action-bar .action-btn { background-color: #85c1a5; color: white; }
+
+/* 複数選択用の丸ボタンラッパー（より左側へ寄せる調整を含む） */
+.select-btn-wrapper {
+    display: flex; align-items: center; justify-content: flex-start;
+    width: 30px; flex-shrink: 0; height: 100%;
+    margin-left: -4px;
+}
+.select-round-btn {
+    width: 18px; height: 18px; border: 2px solid #b0b0b0; border-radius: 50%;
+    box-sizing: border-box; transition: background 0.15s; background-color: #fff;
+}
+.select-round-btn.active {
+    background-color: #85c1a5; border-color: #85c1a5;
+    position: relative;
+}
+.select-round-btn.active::after {
+    content: ''; position: absolute; top: 2px; left: 5px;
+    width: 4px; height: 7px; border: solid white;
+    border-width: 0 2px 2px 0; transform: rotate(45deg);
 }
 
 /* =========================================================================
@@ -52,6 +110,7 @@ input[type="text"], textarea {
     width: 60px; height: 60px; background-color: #85c1a5; color: white;
     font-size: 30px; border-radius: 15px; z-index: 1000;
     display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
 .menu-btn {
@@ -61,16 +120,34 @@ input[type="text"], textarea {
     display: flex; align-items: center; justify-content: center; z-index: 100;
 }
 
-.quiz-list { display: flex; flex-direction: column; gap: 10px; margin-top: 30px; }
+.quiz-list { display: flex; flex-direction: column; gap: 8px; margin-top: 30px; }
 .quiz-item-container { position: relative; display: flex; overflow: hidden; background: #fff;}
 
+/* クイズ一覧ボタンの縦幅・横幅を編集モード前後で完全固定 */
 .quiz-item-btn {
-    flex-grow: 1; background-color: #ffffff; color: #333; 
-    border: 2px solid #9a9a9a; border-radius: 0; padding: 15px;
-    font-size: 18px; cursor: pointer; transition: transform 0.05s ease-out;
+    flex-grow: 1; background-color: #ffffff; color: #333;
+    border: 2px solid #9a9a9a; border-radius: 0; padding: 0 14px;
+    height: 54px; font-size: 18px; cursor: pointer;
     font-weight: bold; user-select: none; -webkit-user-select: none;
     position: relative; z-index: 2; width: 100%; box-sizing: border-box;
-    display: flex; justify-content: space-between; align-items: center;
+    display: flex; align-items: center;
+}
+
+/* クイズタイトルの領域を一定に保ち、はみ出た部分は「…」で省略表示 */
+.quiz-title-text {
+    flex-grow: 1; text-align: left;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* 右端の表示位置を絶対配置でがっちり固定 */
+.quiz-count-text {
+    position: absolute; right: 14px;
+    color: #aaa; font-weight: normal; font-size: 14px; flex-shrink: 0; 
+}
+.quiz-item-container .drag-handle {
+    position: absolute; right: 0; top: 0; bottom: 0;
+    width: 44px; display: flex; align-items: center; justify-content: center;
+    color: #ccc; font-size: 24px; cursor: grab; z-index: 3; box-sizing: border-box;
 }
 
 .delete-btn {
@@ -99,75 +176,72 @@ input[type="text"], textarea {
 .toggle-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* =========================================================================
-   4. 全画面エディタ（問題と解答を編集する画面）の設定
+   4. 全画面エディタの設定
 ========================================================================= */
 #fullScreenEditor {
     position: fixed; top: 0; left: 0; width: 100%; height: 100dvh;
     background-color: #f7f7f7; z-index: 3000; display: flex; flex-direction: column;
 }
-
 .editor-header {
     display: flex; gap: 5px; padding: 10px; background: #fff;
     border-bottom: 1px solid #ccc; align-items: center; justify-content: space-between;
 }
-
-.editor-container { 
-    position: relative; flex-grow: 1; background: #fff; overflow: hidden; 
-}
-
+.editor-container { position: relative; flex-grow: 1; background: #fff; overflow: hidden; }
 .editor-bg, .editor-textarea {
     width: 100%; height: 100%; margin: 0; padding: 15px 15px 300px 15px; box-sizing: border-box;
-    font-size: 16px; font-family: monospace; line-height: 32px; 
+    font-size: 16px; font-family: monospace; line-height: 32px;
     border: none; outline: none; white-space: pre-wrap; word-break: break-all;
 }
-
 .editor-textarea {
     position: absolute; top: 0; left: 0; background: transparent; color: #333; resize: none;
-    overflow-y: auto; 
-    -webkit-overflow-scrolling: touch;
+    overflow-y: auto; -webkit-overflow-scrolling: touch;
 }
-
-.editor-bg { 
-    color: transparent; pointer-events: none; position: absolute; top: 0; left: 0; 
-    overflow: hidden; 
-}
-
+.editor-bg { color: transparent; pointer-events: none; position: absolute; top: 0; left: 0; overflow: hidden; }
 .editor-bg-row { min-height: 32px; }
 .error-line { background-color: rgba(255, 67, 54, 0.3); }
 
 /* =========================================================================
    5. 問題一覧画面の設定
 ========================================================================= */
-#questionListScreen { background: #f7f7f7; padding-bottom: 80px; }
+#questionListScreen { background: #f7f7f7; padding-bottom: 100px; }
 .ql-item-wrapper {
-    position: relative;
-    display: flex;
-    overflow: hidden;
-    background: #fff;
-    border: 1px solid #ccc;
-    margin-bottom: -1px;
+    position: relative; display: flex; overflow: hidden; background: #fff;
+    border: 1px solid #ccc; margin-bottom: -1px;
 }
 
+/* 問題アイテムの高さと構造を固定し、編集前後でのレイアウト崩れを防ぐ */
 .q-list-item {
-    flex-grow: 1;
-    display: flex; align-items: center; background: #fff;
-    padding: 10px 40px 10px 10px; 
-    position: relative; min-height: 48px; box-sizing: border-box;
-    z-index: 2; width: 100%;
-    transition: transform 0.05s ease-out; cursor: pointer;
+    flex-grow: 1; display: flex; align-items: center; background: #fff;
+    padding: 10px 44px 10px 10px; /* 右端ボタン・ハンドル分の余白 */
+    position: relative; min-height: 44px; box-sizing: border-box;
+    z-index: 2; width: 100%; transition: transform 0.05s ease-out; cursor: pointer;
 }
 
-.q-list-num { width: 30px; color: #888; font-size: 14px; font-weight: bold; }
-.q-list-text { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 16px;}
-.q-list-div { width: 1px; background: #e0e0e0; height: 20px; margin: 0 10px; }
+/* 左端：問題番号表示領域（30pxで固定） */
+.q-list-num { width: 30px; color: #888; font-size: 14px; font-weight: bold; flex-shrink: 0; text-align: left; }
 
-.q-list-btn, .drag-handle {
+/* 中央：テキスト自動折り返し（横幅・折り返し位置を不変に維持） */
+.q-list-text {
+    flex: 1; font-size: 16px; white-space: normal; word-break: break-all; line-height: 1.4;
+}
+.q-list-div { width: 1px; background: #e0e0e0; height: 20px; margin: 0 10px; flex-shrink: 0; }
+
+/* 右端：＞ボタン及び＝ハンドルの位置と専有領域を完全一致させて右端で綺麗に整列 */
+.q-list-btn, .q-list-item .drag-handle {
     position: absolute; right: 0; top: 0; bottom: 0;
-    width: 40px; display: flex; align-items: center; justify-content: center;
-    background: none; border: none; padding: 0;
+    width: 44px; display: flex; align-items: center; justify-content: center;
+    background: none; border: none; padding: 0; box-sizing: border-box;
 }
 .q-list-btn { color: #888; font-size: 20px; font-weight: bold; cursor: pointer; }
-.drag-handle { color: #ccc; font-size: 24px; cursor: grab; }
+.q-list-item .drag-handle { color: #ccc; font-size: 24px; cursor: grab; z-index: 3; }
+
+.move-target-list { max-height: 240px; overflow-y: auto; margin-top: 15px; display: flex; flex-direction: column; gap: 6px; }
+.move-target-item-btn {
+    width: 100%; background-color: #ffffff; color: #333; text-align: left;
+    border: 1px solid #ccc; padding: 12px; font-size: 14px; border-radius: 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.move-target-item-btn:active { background-color: #eee; }
 
 /* =========================================================================
    6. クイズプレイ画面の動的パーツ設定
@@ -176,16 +250,16 @@ input[type="text"], textarea {
 .answer-display { font-size: 20px; font-weight: bold; color: #e91e63; min-height: 22px; line-height: 22px; margin: -4px auto 4px; }
 .progress-display { font-size: 18px; color: #888; margin-bottom: 20px; font-weight: bold; }
 
-#submitBtn {
-    display: block; margin: 0 auto; width: 50%; 
-}
+#submitBtn { display: block; margin: 0 auto; width: 50%; }
 
+/* ◯と×を完全に画面のど真ん中に表示する設定 */
 #overlayMark {
-    position: fixed; top: 50%; left: 50%; 
-    transform: translate(-50%, -50%); 
-    line-height: 1; display: flex;
-    align-items: center; justify-content: center; pointer-events: none;
-    opacity: 0; z-index: 9999; transition: opacity 0.2s ease-out;
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none; opacity: 0; z-index: 9999;
+    transition: opacity 0.2s ease-out; box-sizing: border-box;
+    text-align: center; line-height: 1;
 }
 .show-mark { opacity: 1 !important; }
 
@@ -197,12 +271,12 @@ input[type="text"], textarea {
 
 .modal-overlay {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); 
-    display: flex; align-items: center; justify-content: center; z-index: 2000;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex; align-items: center; justify-content: center; z-index: 2500;
 }
 .modal-content {
     background-color: #f7f7f7; padding: 30px; border-radius: 12px;
-    text-align: center; width: 90%; max-width: 250px; 
+    text-align: center; width: 90%; max-width: 250px;
 }
 .menu-action-btn {
     width: 100%; padding: 15px; margin-bottom: 12px; background-color: #c5a58c;
