@@ -1,0 +1,3 @@
+exclude:
+  - node_modules
+  - quiz-maker/node_modules
