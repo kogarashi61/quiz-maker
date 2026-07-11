@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>クイズ作成ツール</title>
-    <meta name="description" content="オリジナルのクイズを作って遊べるサイトです">
+    <meta name="description" content="オリジナルのクイズを作って遊べるサイト。">
+    <meta property="og:title" content="らくらくクイズメーカー">
+    <meta property="og:description" content="オリジナルのクイズを作って遊べるサイト。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://kogarashi61.github.io/quiz-maker/">
+    <meta property="og:image" content="https://kogarashi61.github.io/quiz-maker/quiz-maker.png">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -23,11 +29,11 @@
         <div class="editor-header">
             <button id="cancelEditorBtn" class="icon-btn">&lt;</button>
             <span style="flex:1; text-align: center; font-weight: bold;">問題と解答</span>
-            <button id="applyEditorBtn" class="primary-btn" style="padding: 8px 15px; border-radius: 20px;">OK</button>
+            <button id="applyEditorBtn" class="primary-btn" style="padding: 8px 15px; border-radius: 20px;">保存</button>
         </div>
         <div class="editor-container">
             <div id="editorBg" class="editor-bg"></div>
-            <textarea id="editorTextarea" class="editor-textarea" placeholder="例：&#13;&#10;win 勝つ&#13;&#10;lose 負ける 失う"></textarea>
+            <textarea id="editorTextarea" class="editor-textarea" placeholder="問題と解答の間に区切り文字を入力してください。&#13;&#10;例：&#13;&#10;win 勝つ&#13;&#10;lose 負ける 失う"></textarea>
         </div>
     </div>
 
@@ -48,18 +54,30 @@
     <div id="editScreen" class="container" style="display: none;">
         <h2>クイズの編集</h2>
         <div class="edit-box">
-            <label for="editTitle">タイトル</label>
-            <input type="text" id="editTitle" autocomplete="off" style="width: 100%; margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #333;">タイトル</label>
+            <input type="text" id="editTitle" placeholder="クイズリストの名前" autocomplete="off" style="width: 100%; margin-bottom: 20px;">
            
             <label>問題と解答</label>
+            <input type="text" id="editDelimiter" placeholder="区切り文字" autocomplete="off" style="width: 100%; margin-bottom: 5px;">
+            <p style="font-size: 12px; color: #888; margin-top: 0; margin-bottom: 20px;">空欄ならスペース（全角または半角）区切りになります。</p>
+
             <button id="openEditorBtn" style="width: 100%;height: 38px; margin: 10px auto 25px; background-color: white; border-radius: 2px; color:#333; border: 1px solid #333; display: flex; align-items: center; justify-content: center;">編集する</button>
            
-            <div style="margin-bottom: 25px;">
+            <div style="margin-bottom: 15px;">
                 <label for="editFontSize" style="display: flex; justify-content: space-between;">
                     <span>問題の文字サイズ</span>
                     <span><span id="fontSizeDisplay">30</span>px</span>
                 </label>
                 <input type="range" id="editFontSize" min="10" max="50" value="30" style="width: 100%; margin-top: 8px;">
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <label style="margin-bottom: 8px; display: block;">問題の配置</label>
+                <div class="toggle-group" style="margin-bottom: 0;">
+                    <button id="alignLeftBtn" class="toggle-btn" style="border-radius: 6px 0 0 6px;">左揃え</button>
+                    <button id="alignCenterBtn" class="toggle-btn active" style="border-radius: 0;">中央揃え</button>
+                    <button id="alignRightBtn" class="toggle-btn" style="border-radius: 0 6px 6px 0;">右揃え</button>
+                </div>
             </div>
 
             <button id="saveEditBtn" class="primary-btn" style="display: block; width: 70%; margin: 0 auto 20px;">保存する</button>
@@ -100,6 +118,9 @@
 
         <div class="quiz-box" id="quizBoxArea" style="display: none;">
             <div id="progressDisplay" class="progress-display"></div>
+            
+            <h3 id="resultHeader" style="display: none; margin: 0 0 5px;">結果</h3>
+            <p id="resultTotalCountDisplay" style="display: none; color: #888; font-weight: bold; margin: 0 0 20px; font-size: 16px;"></p>
             <h3 id="question">問題</h3>
 
             <div id="resultStats" style="display: none; font-size: 18px; font-weight: bold; margin-bottom: 20px;">
@@ -112,8 +133,8 @@
             <input type="text" id="answerInput" autocomplete="off" style="width:80%; margin:0 auto 20px; display:block;">
             <button id="submitBtn" class="primary-btn">答える</button>
 
-            <div id="mistakeContainer" style="display: none; margin-top: 30px; border-top: 2px dashed #ccc; padding-top: 20px;">
-                <h4 style="margin: 10px auto 5px;">間違えた問題</h4>
+            <div id="mistakeContainer" style="display: none; margin-top: 30px; padding-top: 0px;">
+                <h4 style="margin: 10px auto 15px;">間違えた問題</h4>
                 <div id="mistakeList" class="mistake-list"></div>
             </div>
         </div>
