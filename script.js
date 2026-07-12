@@ -447,6 +447,14 @@ edTa.addEventListener('scroll', () => { edBg.scrollTop = edTa.scrollTop; edBg.sc
 
 function syncEditorBackground(errorLines = []) {
     let text = edTa.value;
+    
+    if (text === '') {
+        edBg.innerHTML = '';
+        edBg.scrollTop = 0;
+        edBg.scrollLeft = 0;
+        return;
+    }
+
     const textLines = text.split('\n');
     let html = '';
    
