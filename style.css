@@ -1,6 +1,10 @@
 /* =========================================================================
    1. 初期化・共通パーツ設定
 ========================================================================= */
+button, input, textarea, .q-list-item, .quiz-item-container {
+    touch-action: manipulation;
+}
+
 html, body {
     font-family: sans-serif;
     background-color: #f7f7f7;
