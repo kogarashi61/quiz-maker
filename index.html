@@ -44,7 +44,7 @@
 
     <div id="homeScreen" class="container" style="position: relative;">
         <button id="menuBtn" class="menu-btn">☰</button>
-        <button id="toggleReorderBtn" class="header-btn" style="position: absolute; top: 40px; right: 0; z-index: 100;">編集</button>
+        <button id="toggleReorderBtn" class="header-edit-btn" style="position: absolute; top: 44px; right: 0; z-index: 100;">編集</button>
         <h1 style="margin-top: 0;">クイズ一覧</h1>
         <div id="quizList" class="quiz-list"></div>
        
@@ -106,14 +106,14 @@
                 <button id="orderRandBtn" class="toggle-btn" style="border-radius: 0 6px 6px 0;">ランダム順</button>
             </div>
 
-            <button id="startQuizBtn" class="primary-btn" style="width: 100%; margin-bottom: 20px;">スタート</button>
+            <button id="startQuizBtn" class="primary-btn" style="width: 100%; margin-bottom: 10px;">スタート</button>
            
             <div id="resumeArea" style="display: none;">
-                <hr style="border: none; border-top: 2px dashed #ccc; margin: 0 0 20px 0;">
-                <button id="resumeQuizBtn" class="primary-btn" style="width: 100%; margin-bottom: 20px;">続きから</button>
+                <hr style="border: none; border-top: 2px dashed #ccc; margin: 0 0 10px 0;">
+                <button id="resumeQuizBtn" class="primary-btn" style="width: 100%; margin-bottom: 10px;">続きから</button>
             </div>
            
-            <hr style="border: none; border-top: 2px dashed #ccc; margin: 0 0 20px 0;">
+            <hr style="border: none; border-top: 2px dashed #ccc; margin: 0 0 10px 0;">
            
             <button id="editQuizBtn" class="accent-btn" style="width: 100%; margin-bottom: 10px;">クイズを編集</button>
             <button id="openQuestionListBtn" class="accent-btn" style="width: 100%; margin-bottom: 10px;">問題一覧</button>
@@ -154,9 +154,9 @@
     <div id="questionListScreen" class="container" style="display: none; position: relative;">
         <button id="qlHeaderBackBtn" class="fixed-back-btn">&lt;</button>
        
-        <div style="position: absolute; top: 40px; right: 0; z-index: 100; display: flex; gap: 6px;">
+        <div style="position: absolute; top: 44px; right: 0; z-index: 100; display: flex; gap: 6px;">
             <button id="qlFilterMistakeBtn" class="header-btn">×</button>
-            <button id="qlToggleReorderBtn" class="header-btn">編集</button>
+            <button id="qlToggleReorderBtn" class="header-edit-btn">編集</button>
         </div>
        
         <h2 style="margin-top: 0;">問題一覧</h2>

@@ -413,19 +413,28 @@ document.getElementById('cancelEditBtn').addEventListener('click', function() {
 const edBg = document.getElementById('editorBg');
 const edTa = document.getElementById('editorTextarea');
 
+let scrollPosition = 0;
+
 document.getElementById('openEditorBtn').addEventListener('click', () => {
     edTa.value = tempRawText;
     syncEditorBackground();
     document.getElementById('fullScreenEditor').style.display = 'flex';
+
+    scrollPosition = window.pageYOffset;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollPosition}px`;
+    document.body.style.width = '100%';
    
-    document.body.style.overflow = 'hidden';
     edTa.scrollTop = 0;
     edBg.scrollTop = 0;
 });
 
 document.getElementById('cancelEditorBtn').addEventListener('click', () => {
     document.getElementById('fullScreenEditor').style.display = 'none';
-    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, scrollPosition);
 });
 
 document.getElementById('applyEditorBtn').addEventListener('click', () => {
@@ -439,11 +448,34 @@ document.getElementById('applyEditorBtn').addEventListener('click', () => {
     }
     tempRawText = text;
     document.getElementById('fullScreenEditor').style.display = 'none';
-    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, scrollPosition);
 });
 
 edTa.addEventListener('input', () => syncEditorBackground());
 edTa.addEventListener('scroll', () => { edBg.scrollTop = edTa.scrollTop; edBg.scrollLeft = edTa.scrollLeft; });
+
+edTa.addEventListener('input', adjustScrollToCursor);
+edTa.addEventListener('click', adjustScrollToCursor);
+edTa.addEventListener('keyup', adjustScrollToCursor);
+
+function adjustScrollToCursor() {
+    const cursorPos = edTa.selectionStart;
+    const textBeforeCursor = edTa.value.substring(0, cursorPos);
+    const currentLine = textBeforeCursor.split('\n').length;
+    const cursorY = currentLine * 32;
+    const visibleHeight = edTa.clientHeight;
+    const currentScrollTop = edTa.scrollTop;
+
+    if (cursorY > currentScrollTop + visibleHeight - 64) {
+        edTa.scrollTop = cursorY - visibleHeight + 64;
+    }
+    else if (cursorY < currentScrollTop + 32) {
+        edTa.scrollTop = cursorY - 32;
+    }
+}
 
 function syncEditorBackground(errorLines = []) {
     let text = edTa.value;
@@ -562,7 +594,7 @@ function renderQuestionList() {
                 <div class="select-btn-wrapper">
                     <div class="select-round-btn ${isSelected ? 'active' : ''}"></div>
                 </div>
-                <span class="q-list-text q-text-q">${w.q}</span>
+                <span class="q-list-text q-text-q">${w.q.replace(/\\n|¥n/g, '<br>')}</span>
                 <div class="q-list-div"></div>
                 <span class="q-list-text q-text-a">${w.a.join(' ')}</span>
                 <div class="drag-handle">=</div>
@@ -586,7 +618,7 @@ function renderQuestionList() {
         } else {
             c.innerHTML = `
                 <span class="q-list-num">${originalIndex + 1}</span>
-                <span class="q-list-text q-text-q">${w.q}</span>
+                <span class="q-list-text q-text-q">${w.q.replace(/\\n|¥n/g, '<br>')}</span>
                 <div class="q-list-div"></div>
                 <span class="q-list-text q-text-a">${w.a.join(' ')}</span>
                 <button class="q-list-btn">></button>
@@ -909,7 +941,10 @@ function beginQuizUI() {
 function showQuestion() {
     isWaitingForNext = false;
     document.getElementById('progressDisplay').textContent = `${currentIndex + 1} / ${currentQuizData.length}`;
-    document.getElementById('question').textContent = currentQuizData[currentIndex].q;
+    
+    const qText = currentQuizData[currentIndex].q.replace(/\\n/g, '\n');
+    document.getElementById('question').innerText = qText;
+    
     document.getElementById('answerInput').value = '';  
     document.getElementById('correctAnswerDisplay').textContent = '';
     document.getElementById('submitBtn').textContent = '答える';
@@ -1017,7 +1052,8 @@ function renderMistakes() {
     if (mistakesThisRound.length === 0) { c.style.display = 'none'; return; }
     c.style.display = 'block';
     mistakesThisRound.forEach(m => {
-        l.innerHTML += `<div class="mistake-item"><span class="mistake-q">${m.q}</span><span class="mistake-a">${m.a}</span></div>`;
+        const safeQ = m.q.replace(/\\n|¥n/g, '<br>');
+        l.innerHTML += `<div class="mistake-item"><span class="mistake-q">${safeQ}</span><span class="mistake-a">${m.a}</span></div>`;
     });
 }
 

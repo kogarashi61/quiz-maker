@@ -48,7 +48,7 @@ input[type="text"], textarea {
     color: #555;
     cursor: pointer;
     padding: 0 14px;
-    background-color: #ffffff;
+    background-color: #fff;
     border: 1px solid #b0b0b0;
     border-radius: 2px;
     box-sizing: border-box;
@@ -59,10 +59,25 @@ input[type="text"], textarea {
     justify-content: center;
     font-weight: bold;
 }
+.header-edit-btn {
+    font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    padding: 0 14px;
+    background-color: #c5a58c;
+    border: 1px solid #c5a58c;
+    border-radius: 2px;
+    box-sizing: border-box;
+    height: 30px;
+    min-width: 60px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
 .header-btn.active {
-    background-color: #e54444;
-    color: #ffffff;
-    border-color: #e54444;
+    background-color: #c5a58c;
+    color: #fff;
+    border-color: #c5a58c;
 }
 
 .fixed-back-btn {
@@ -184,7 +199,7 @@ input[type="text"], textarea {
 ========================================================================= */
 #fullScreenEditor {
     position: fixed; top: 0; left: 0; width: 100%; height: 100dvh;
-    background-color: #f7f7f7; z-index: 3000; display: flex; flex-direction: column;
+    background-color: #fff; z-index: 3000; display: flex; flex-direction: column; overscroll-behavior: none;
 }
 .editor-header {
     display: flex; gap: 5px; padding: 10px; background: #f7f7f7;
@@ -192,13 +207,14 @@ input[type="text"], textarea {
 }
 .editor-container { position: relative; flex-grow: 1; background: #fff; overflow: hidden; }
 .editor-bg, .editor-textarea {
-    width: 100%; height: 100%; margin: 0; padding: 15px 15px 70vh 15px; box-sizing: border-box;
-    font-size: 16px; font-family: monospace; line-height: 32px;
+    width: 100%; height: 100%; margin: 0; padding: 15px 15px 15px 15px; box-sizing: border-box;
+    font-size: 16px; font-family: monospace; line-height: 30px;
     border: none; outline: none; white-space: pre-wrap; word-break: break-all;
 }
 .editor-textarea {
     position: absolute; top: 0; left: 0; background: transparent; color: #333; resize: none;
     overflow-y: auto; -webkit-overflow-scrolling: touch;
+    overscroll-behavior: none;
 }
 .editor-bg { color: transparent; pointer-events: none; position: absolute; top: 0; left: 0; overflow: hidden; }
 .editor-bg-row { min-height: 32px; }
@@ -220,7 +236,8 @@ input[type="text"], textarea {
     z-index: 2; width: 100%; transition: transform 0.05s ease-out; cursor: pointer;
 }
 
-.q-list-num { width: 36px; color: #85c1a5; font-size: 12px; font-weight: bold; flex-shrink: 0; text-align: left; }
+.q-list-num { color: #85c1a5; font-size: 12px; font-weight: bold; flex-shrink: 0; text-align: left; margin-right: 10px;
+}
 .q-list-text {
     font-size: 12px; white-space: normal; word-break: break-all; line-height: 1.4;
 }
@@ -237,7 +254,7 @@ input[type="text"], textarea {
     width: 44px; display: flex; align-items: center; justify-content: center;
     background: none; border: none; padding: 0; box-sizing: border-box;
 }
-.q-list-btn { color: #85c1a5; font-size: 20px; font-weight: bold; cursor: pointer; margin: -6px;}
+.q-list-btn { color: #85c1a5; font-size: 20px; font-weight: bold; cursor: pointer; margin: 0 -8px 0 0;}
 .q-list-item .drag-handle { color: #ccc; font-size: 24px; cursor: grab; z-index: 3; }
 
 .move-target-list { max-height: 240px; overflow-y: auto; margin-top: 15px; display: flex; flex-direction: column; gap: 6px; }
