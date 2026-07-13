@@ -647,16 +647,47 @@ function renderQuestionList() {
     });
 }
 
-function openSingleEdit(word) {
-    editingWordId = word.id;
-    document.getElementById('singleQInput').value = word.q;
-   
-    const sep = editingQuiz.delimiter ? editingQuiz.delimiter : ' ';
-    document.getElementById('singleAInput').value = word.a.join(sep);
-    showScreen('singleWordEditScreen');
+function autoResizeTextarea(el) {
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
 }
 
+function openSingleEdit(word) {
+    editingWordId = word.id;
+    const qInput = document.getElementById('singleQInput');
+    const aInput = document.getElementById('singleAInput');
+    
+    qInput.value = word.q;
+    const sep = editingQuiz.delimiter ? editingQuiz.delimiter : ' ';
+    aInput.value = word.a.join(sep);
+    
+    showScreen('singleWordEditScreen');
+    
+    setTimeout(() => {
+        autoResizeTextarea(qInput);
+        autoResizeTextarea(aInput);
+    }, 0);
+}
+
+document.getElementById('singleQInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+    }
+});
+
+document.getElementById('singleAInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+    }
+});
+
 document.getElementById('singleQInput').addEventListener('input', function() {
+    if (/[\r\n]/.test(this.value)) {
+        this.value = this.value.replace(/[\r\n]/g, '');
+    }
+
+    autoResizeTextarea(this);
+
     if (!editingQuiz) return;
     const delim = editingQuiz.delimiter || '';
     if (delim) {
@@ -668,6 +699,14 @@ document.getElementById('singleQInput').addEventListener('input', function() {
             this.value = this.value.replace(/[ \u3000\t]/g, '');
         }
     }
+});
+
+document.getElementById('singleAInput').addEventListener('input', function() {
+    if (/[\r\n]/.test(this.value)) {
+        this.value = this.value.replace(/[\r\n]/g, '');
+    }
+
+    autoResizeTextarea(this);
 });
 
 document.getElementById('saveSingleEditBtn').addEventListener('click', () => {
