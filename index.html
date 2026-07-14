@@ -20,13 +20,22 @@
 </head>
 <body>
 
-    <div id="menuModal" class="modal-overlay" style="display: none;">
-        <div class="modal-content">
-            <p style="font-size: 12px; color: #888; margin-bottom: 20px;">履歴を削除するとデータが消えるため、<br>こまめに保存してください。</p>
-            <button id="exportBtn" class="menu-action-btn">クイズを保存する</button>
-            <button id="importBtn" class="menu-action-btn">クイズを復元する</button>
-            <button id="closeMenuBtn" class="menu-close-btn">閉じる</button>
-            <input type="file" id="importFile" accept=".json" style="display: none;">
+    <div id="menuModal" class="full-screen-menu" style="display: none;">
+        <div class="menu-header">
+            <button id="closeMenuBtn" class="icon-btn">&lt;</button>
+            <span style="flex:1; text-align: center; font-weight: bold;">メニュー</span>
+            <div style="width: 44px;"></div>
+        </div>
+        <div class="menu-body">
+            <div class="auth-form" style="width: 100%; max-width: 300px; margin-bottom: 20px; text-align: left;">
+                <label style="display:block; margin-bottom:5px; font-weight:bold;">メールアドレス</label>
+                <input type="email" id="authEmail" placeholder="example@email.com" style="width: 100%; margin-bottom: 15px; padding: 8px;">
+                
+                <label style="display:block; margin-bottom:5px; font-weight:bold;">パスワード</label>
+                <input type="password" id="authPassword" placeholder="6文字以上" style="width: 100%; margin-bottom: 15px; padding: 8px;">
+            </div>
+
+            <button id="accountRegisterBtn" class="menu-large-btn">アカウント登録</button>
         </div>
     </div>
 
@@ -34,7 +43,7 @@
         <div class="editor-header">
             <button id="cancelEditorBtn" class="icon-btn">&lt;</button>
             <span style="flex:1; text-align: center; font-weight: bold;">問題と解答</span>
-            <button id="applyEditorBtn" class="primary-btn" style="padding: 8px 15px; border-radius: 20px;">保存</button>
+            <div style="width: 44px;"></div>
         </div>
         <div class="editor-container">
             <div id="editorBg" class="editor-bg"></div>
@@ -181,9 +190,9 @@
         <h2>クイズの編集</h2>
         <div class="edit-box">
             <label>問題</label>
-<textarea id="singleQInput" class="single-edit-textarea" style="width: 100%; margin-bottom: 20px;" rows="1"></textarea>
-<label>解答</label>
-<textarea id="singleAInput" class="single-edit-textarea" style="width: 100%; margin-bottom: 30px;" rows="1"></textarea>
+            <textarea id="singleQInput" class="single-edit-textarea" style="width: 100%; margin-bottom: 20px;" rows="1"></textarea>
+            <label>解答</label>
+            <textarea id="singleAInput" class="single-edit-textarea" style="width: 100%; margin-bottom: 30px;" rows="1"></textarea>
            
             <button id="saveSingleEditBtn" class="primary-btn" style="width: 70%; margin: 10px auto 20px; display: block;">保存する</button>
             <button id="cancelSingleEditBtn" class="secondary-btn" style="width: 70%; display: block; margin: 0 auto;">キャンセル</button>
@@ -193,5 +202,48 @@
     <div id="overlayMark"></div>
 
     <script src="script.js" defer></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBBewTMsqAK-0HELbfNt6YR8IRaS9SzLQU",
+            authDomain: "quiz-maker-f8c90.firebaseapp.com",
+            projectId: "quiz-maker-f8c90",
+            storageBucket: "quiz-maker-f8c90.firebasestorage.app",
+            messagingSenderId: "147513054125",
+            appId: "1:147513054125:web:10a6c826e7d29607a6c724"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        document.getElementById('accountRegisterBtn').addEventListener('click', () => {
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value.trim();
+
+            if (!email || !password) {
+                alert('メールアドレスとパスワードを入力してください。');
+                return;
+            }
+
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    alert(`登録が完了しました！`);
+                    document.getElementById('menuModal').style.display = 'none';
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    if (errorCode === 'auth/email-already-in-use') {
+                        alert('このメールアドレスは既に登録されています。');
+                    } else if (errorCode === 'auth/weak-password') {
+                        alert('パスワードは6文字以上で設定してください。');
+                    } else {
+                        alert(`エラーが発生しました: ${error.message}`);
+                    }
+                });
+        });
+    </script>
 </body>
 </html>
