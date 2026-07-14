@@ -566,7 +566,7 @@ function renderQuestionList() {
     }
    
     if (displayWords.length === 0) {
-        listDiv.innerHTML = '<p style="text-align:center; color:#888; margin-top: 20px;">該当する問題がありません。</p>';
+        listDiv.innerHTML = '<p style="text-align:center; color:#888; margin-top: 60px;">該当する問題がありません。</p>';
         return;
     }
 

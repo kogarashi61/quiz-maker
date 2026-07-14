@@ -100,7 +100,7 @@ input[type="text"], textarea {
     display: flex; justify-content: center; gap: 6px; z-index: 1500;
 }
 .action-bar button {
-    flex: 1; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 6px;
+    flex: 1; padding: 10px; font-size: 16px; font-weight: bold; border-radius: 6px;
 }
 .action-bar .action-btn { background-color: #85c1a5; color: white; }
 
@@ -332,14 +332,13 @@ input[type="text"], textarea {
 }
 .menu-header {
     display: flex; padding: 10px; background: #f7f7f7;
-    border-bottom: 1px solid #ccc; align-items: center; justify-content: space-between;
+    align-items: center; justify-content: space-between;
 }
 .menu-body {
-    flex-grow: 1; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; gap: 20px;
+    flex-grow: 1; padding: 40px 0; display: flex; flex-direction: column; align-items: center; gap: 2px;
 }
 .menu-large-btn {
-    width: 100%; max-width: 300px; padding: 16px; background-color: #85c1a5;
-    color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1); cursor: pointer; text-align: center;
+    width: 100%; max-width: 300px; padding: 10px; background-color: #fff;
+    color: #333; border: 2px solid #ccc; border-radius: 0; font-size: 16px;
+    cursor: pointer; text-align: center;
 }
-.menu-large-btn:active { background-color: #72b093; }
