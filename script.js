@@ -34,7 +34,15 @@ window.onload = function() {
 };
 
 function saveQuizzesToStorage() {
-    localStorage.setItem('myQuizSets', JSON.stringify(savedQuizzes));
+    const dataString = JSON.stringify(savedQuizzes);
+    
+    // 1. まずは今まで通り、スマホ本体（ローカル）に保存
+    localStorage.setItem('myQuizSets', dataString);
+    
+    // 2. もしログインしていれば、クラウドにも自動で同期する
+    if (window.syncToCloud) {
+        window.syncToCloud(dataString);
+    }
 }
 
 function generateId() { return 'id_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9); }

@@ -23,19 +23,30 @@
     <div id="menuModal" class="full-screen-menu" style="display: none;">
         <div class="menu-header">
             <button id="closeMenuBtn" class="icon-btn">&lt;</button>
-            <h2><span style="flex:1; text-align: center;">メニュー</span></h2>
+            <span style="flex:1; text-align: center; font-weight: bold;">メニュー</span>
             <div style="width: 44px;"></div>
         </div>
         <div class="menu-body">
-            <div class="auth-form" style="width: 100%; max-width: 300px; margin-bottom: 20px; text-align: left;">
+            
+            <div id="authSection" style="width: 100%; max-width: 300px; text-align: left;">
                 <label style="display:block; margin-bottom:5px; font-weight:bold;">メールアドレス</label>
                 <input type="email" id="authEmail" placeholder="example@email.com" style="width: 100%; margin-bottom: 15px; padding: 8px;">
                 
                 <label style="display:block; margin-bottom:5px; font-weight:bold;">パスワード</label>
-                <input type="password" id="authPassword" placeholder="6文字以上" style="width: 100%; margin-bottom: 15px; padding: 8px;">
+                <input type="password" id="authPassword" placeholder="6文字以上" style="width: 100%; margin-bottom: 25px; padding: 8px;">
+                
+                <button id="accountRegisterBtn" class="menu-large-btn" style="margin-bottom: 15px;">新規登録</button>
+                <button id="accountLoginBtn" class="menu-large-btn" style="background-color: #fff;">ログイン</button>
             </div>
 
-            <button id="accountRegisterBtn" class="menu-large-btn">アカウント登録</button>
+            <div id="loggedInSection" style="display: none; width: 100%; max-width: 300px; text-align: center;">
+                <p id="userEmailDisplay" style="margin-bottom: 30px; font-weight: bold; color: #555;"></p>
+                
+                <button id="loadFromCloudBtn" class="menu-large-btn" style="background-color: #c5a58c; margin-bottom: 30px;">クラウドからデータを復元する</button>
+                
+                <button id="logoutBtn" class="secondary-btn" style="width: 100%; padding: 15px; border-radius: 8px;">ログアウト</button>
+            </div>
+
         </div>
     </div>
 
@@ -204,7 +215,8 @@
     <script src="script.js" defer></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBBewTMsqAK-0HELbfNt6YR8IRaS9SzLQU",
@@ -217,33 +229,144 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
 
-        document.getElementById('accountRegisterBtn').addEventListener('click', () => {
+        let currentUser = null;
+
+        // ログイン状態の監視（画面の切り替え ＋ 自動ログイン・手動ログイン時の自動データ同期）
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            if (user) {
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('loggedInSection').style.display = 'block';
+                document.getElementById('userEmailDisplay').textContent = user.email + ' でログイン中';
+
+                try {
+                    // クラウド（Firestore）からデータを取ってくる
+                    const docSnap = await getDoc(doc(db, "users", user.uid));
+                    if (docSnap.exists()) {
+                        const cloudData = docSnap.data().quizData;
+                        const localData = localStorage.getItem('myQuizSets');
+
+                        // スマホ本体のデータ（localData）が空っぽ（履歴削除直後など）の場合、またはクラウドのデータと中身が違う場合、自動的に上書きして復元します。
+                        if (cloudData && cloudData !== localData) {
+                            localStorage.setItem('myQuizSets', cloudData);
+                            
+                            // データを読み込み直して、一覧画面を即座に最新状態に書き換える
+                            if (typeof loadQuizzesFromStorage === 'function' && typeof renderQuizList === 'function') {
+                                loadQuizzesFromStorage();
+                                renderQuizList();
+                            }
+                            console.log("クラウドから最新のデータを自動復元しました。");
+                        }
+                    }
+                } catch (e) {
+                    console.error("データ自動同期エラー:", e);
+                }
+
+            } else {
+                document.getElementById('authSection').style.display = 'block';
+                document.getElementById('loggedInSection').style.display = 'none';
+                document.getElementById('authEmail').value = '';
+                document.getElementById('authPassword').value = '';
+            }
+        });
+
+        // 新規登録
+        document.getElementById('accountRegisterBtn').addEventListener('click', async () => {
             const email = document.getElementById('authEmail').value.trim();
             const password = document.getElementById('authPassword').value.trim();
-
-            if (!email || !password) {
-                alert('メールアドレスとパスワードを入力してください。');
-                return;
+            if (!email || !password) return alert('メールアドレスとパスワードを入力してください。');
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                alert('アカウントを作成しました！');
+            } catch (error) {
+                alert(`エラー: ${error.message}`);
             }
-
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    const user = userCredential.user;
-                    alert(`登録が完了しました！`);
-                    document.getElementById('menuModal').style.display = 'none';
-                })
-                .catch((error) => {
-                    const errorCode = error.code;
-                    if (errorCode === 'auth/email-already-in-use') {
-                        alert('このメールアドレスは既に登録されています。');
-                    } else if (errorCode === 'auth/weak-password') {
-                        alert('パスワードは6文字以上で設定してください。');
-                    } else {
-                        alert(`エラーが発生しました: ${error.message}`);
-                    }
-                });
         });
+
+        // ログイン
+        document.getElementById('accountLoginBtn').addEventListener('click', async () => {
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value.trim();
+            if (!email || !password) return alert('メールアドレスとパスワードを入力してください。');
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                alert('ログインに失敗しました。パスワード等を確認してください。');
+            }
+        });
+
+        // ログアウト
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await signOut(auth);
+        });
+
+        // クラウドに保存（localStorageのデータをFirestoreに送る）
+        document.getElementById('saveToCloudBtn').addEventListener('click', async () => {
+            if (!currentUser) return;
+            const localData = localStorage.getItem('myQuizSets');
+            if (!localData) return alert('保存するデータがありません。');
+            
+            try {
+                const btn = document.getElementById('saveToCloudBtn');
+                btn.textContent = '保存中...';
+                await setDoc(doc(db, "users", currentUser.uid), {
+                    quizData: localData,
+                    updatedAt: new Date()
+                });
+                btn.textContent = 'クラウドに保存する';
+                alert('クラウドへの保存が完了しました！');
+            } catch (error) {
+                alert('保存に失敗しました。');
+                console.error(error);
+            }
+        });
+
+        // クラウドから読み込み（Firestoreから取ってきてlocalStorageを上書き）
+        document.getElementById('loadFromCloudBtn').addEventListener('click', async () => {
+            if (!currentUser) return;
+            if (!confirm('現在の端末のデータはクラウドのデータで上書きされます。よろしいですか？')) return;
+            
+            try {
+                const btn = document.getElementById('loadFromCloudBtn');
+                btn.textContent = '復元中...';
+                const docSnap = await getDoc(doc(db, "users", currentUser.uid));
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data().quizData;
+                    if (data) {
+                        localStorage.setItem('myQuizSets', data);
+                        alert('データを復元しました！画面を更新します。');
+                        window.location.reload(); // データを読み込み直すためにリロード
+                    } else {
+                        alert('クラウドにクイズデータがありません。');
+                    }
+                } else {
+                    alert('クラウドに保存されたデータが見つかりません。');
+                }
+                btn.textContent = 'クラウドから復元する';
+            } catch (error) {
+                alert('復元に失敗しました。');
+                console.error(error);
+            }
+        });
+
+        // 外部ファイル（script.js）から呼び出せる自動保存関数
+        window.syncToCloud = async (localDataString) => {
+            if (!currentUser) return; // ログインしていなければ何もしない（ローカル保存のみ）
+            
+            try {
+                // クラウドのデータベースを裏で静かに上書きする
+                await setDoc(doc(db, "users", currentUser.uid), {
+                    quizData: localDataString,
+                    updatedAt: new Date()
+                });
+                console.log("クラウドへ自動保存されました");
+            } catch (error) {
+                console.error("自動保存エラー:", error);
+            }
+        };
     </script>
 </body>
 </html>
