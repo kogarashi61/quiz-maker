@@ -248,7 +248,7 @@
                         const cloudData = docSnap.data().quizData;
                         const localData = localStorage.getItem('myQuizSets');
 
-                        // スマホ本体のデータ（localData）が空っぽ（履歴削除直後など）の場合、またはクラウドのデータと中身が違う場合、自動的に上書きして復元します。
+                        // スマホ本体のデータ（localData）が空っぽ（履歴削除直後など）の場合、またはクラウドのデータと中身が違う場合、自動的に上書きして復元
                         if (cloudData && cloudData !== localData) {
                             localStorage.setItem('myQuizSets', cloudData);
                             
@@ -279,7 +279,7 @@
             if (!email || !password) return alert('メールアドレスとパスワードを入力してください。');
             try {
                 await createUserWithEmailAndPassword(auth, email, password);
-                alert('アカウントを作成しました！');
+                alert('アカウントを作成しました。');
             } catch (error) {
                 alert(`エラー: ${error.message}`);
             }
@@ -293,7 +293,7 @@
             try {
                 await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
-                alert('ログインに失敗しました。パスワード等を確認してください。');
+                alert('ログインに失敗しました。メールアドレスとパスワードを確認してください。');
             }
         });
 
@@ -302,62 +302,12 @@
             await signOut(auth);
         });
 
-        // クラウドに保存（localStorageのデータをFirestoreに送る）
-        document.getElementById('saveToCloudBtn').addEventListener('click', async () => {
-            if (!currentUser) return;
-            const localData = localStorage.getItem('myQuizSets');
-            if (!localData) return alert('保存するデータがありません。');
-            
-            try {
-                const btn = document.getElementById('saveToCloudBtn');
-                btn.textContent = '保存中...';
-                await setDoc(doc(db, "users", currentUser.uid), {
-                    quizData: localData,
-                    updatedAt: new Date()
-                });
-                btn.textContent = 'クラウドに保存する';
-                alert('クラウドへの保存が完了しました！');
-            } catch (error) {
-                alert('保存に失敗しました。');
-                console.error(error);
-            }
-        });
-
-        // クラウドから読み込み（Firestoreから取ってきてlocalStorageを上書き）
-        document.getElementById('loadFromCloudBtn').addEventListener('click', async () => {
-            if (!currentUser) return;
-            if (!confirm('現在の端末のデータはクラウドのデータで上書きされます。よろしいですか？')) return;
-            
-            try {
-                const btn = document.getElementById('loadFromCloudBtn');
-                btn.textContent = '復元中...';
-                const docSnap = await getDoc(doc(db, "users", currentUser.uid));
-                
-                if (docSnap.exists()) {
-                    const data = docSnap.data().quizData;
-                    if (data) {
-                        localStorage.setItem('myQuizSets', data);
-                        alert('データを復元しました！画面を更新します。');
-                        window.location.reload(); // データを読み込み直すためにリロード
-                    } else {
-                        alert('クラウドにクイズデータがありません。');
-                    }
-                } else {
-                    alert('クラウドに保存されたデータが見つかりません。');
-                }
-                btn.textContent = 'クラウドから復元する';
-            } catch (error) {
-                alert('復元に失敗しました。');
-                console.error(error);
-            }
-        });
-
         // 外部ファイル（script.js）から呼び出せる自動保存関数
         window.syncToCloud = async (localDataString) => {
             if (!currentUser) return; // ログインしていなければ何もしない（ローカル保存のみ）
             
             try {
-                // クラウドのデータベースを裏で静かに上書きする
+                // クラウドのデータベースを裏で上書きする
                 await setDoc(doc(db, "users", currentUser.uid), {
                     quizData: localDataString,
                     updatedAt: new Date()
